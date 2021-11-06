@@ -21,18 +21,18 @@ You can use the scripts in two ways:
 
 A. Starting a test structure using    
   ```bash
-  DBDelay.sh test X
+  sudo DBDelay.sh test X
   ```
   Where `X` is the desired number of the containers. This will build a network called `testNet` with a bridge named `myTestNet` and the containers named `Client1` to `ClientX`.  It will ask for each container the total bandwidth it accepts from the bridge (through VethX), the delay and the bandwidth regarding every other container towards this one.
   
   In this case, after fininishing your tests, you can clean the test structure using
   ```bash
-  DBDelay.sh clean X
+  sudo DBDelay.sh clean X
   ``` 
 B. Applying the script on an existing bridge. 
   1. Run the script as
   ```bash
-  DBDelay.sh modify BRIDGE_NAME
+  sudo DBDelay.sh modify BRIDGE_NAME
   ``` 
   Where ` BRIDGE_NAME` is the name of your bridge that you want to apply your desired delay and bandwith control (use `docker network ls` in case you do not remember the bridge name). It will ask for each container the total bandwidth it accepts from the bridge (through VethX), the delay and the bandwidth regarding every other container towards this one. 
   
