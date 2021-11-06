@@ -9,8 +9,8 @@ The controll of the delay from `container A` towards `container B` is done in `V
 A simple structure with internal view of `VethXX` a bridge and the containers is demonstrated here: 
 
 <p align="middle">
-  <img src="./single-topo.png" width="300" height="250" />
-  <img src="./mid2.png" width="300" height="250" /> 
+  <img src="./delay1.png" width="300" height="250" />
+  <img src="./delay2.png" width="300" height="250" /> 
 </p>
 
 ## Using the script
