@@ -10,7 +10,7 @@ A simple structure with internal view of `VethXX` a bridge and the containers is
 
 <p align="middle">
   <img src="./delay1.png" width="300" height="250" />
-  <img src="./delay2.png" width="300" height="250" /> 
+  <img src="./delay3.png" width="300" height="250" /> 
 </p>
 
 ## Using the script
