@@ -19,8 +19,8 @@ function cleanUp() {
     echo "remove: $(sudo docker container rm client$i)"
   done
   for i in $(docker network ls); do
-    if [[ "$i" == "myTestNet" ]]; then
-      echo "Removing the bridge: $(sudo docker network rm myTestNet)"
+    if [[ "$i" == "myTestBridge" ]]; then
+      echo "Removing the bridge: $(sudo docker network rm myTestBridge)"
     fi
   done
 
@@ -37,7 +37,7 @@ function testNet() {
   echo -e "   " >> docker-compose.yml
   echo -e "networks:" >> docker-compose.yml
   echo -e "  testNet:" >> docker-compose.yml
-  echo -e "    name: myTestNet" >> docker-compose.yml
+  echo -e "    name: myTestBridge" >> docker-compose.yml
   echo -e "    driver: bridge" >> docker-compose.yml
   echo -e "   " >> docker-compose.yml
   echo -e "services:" >> docker-compose.yml
@@ -55,7 +55,7 @@ function testNet() {
 
   # Creating containers and the bridge
   sudo docker-compose up -d
-  BR_NAME="myTestNet"
+  BR_NAME="myTestBridge"
 }
 
 
