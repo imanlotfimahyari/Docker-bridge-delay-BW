@@ -17,12 +17,12 @@ A simple structure with internal view of `VethX` a bridge and the containers is 
 
 ## Schematic of the structure of the classes, qdiscs and filters
   ```bash
-  #   (f) -<            1:0            root handle 1: cbq|htb "qdisc"  
+  #   (f) --<<          1:0            root handle 1:0 cbq|htb "qdisc"  
   #   (i) |              |                                           
   #   (l) |             1:1            classid 1:1 cbq|htb "class"
   #   (t) |            /   \
   #   (e) |           /     \
-  #   (r) ->       1:2      1:3   ...  leaf classes
+  #   (r) -->>     1:2      1:3   ...  leaf classes
   #                 |        |
   #                20:       30:  ...  leaf qdiscs
   #              (netem     (netem
