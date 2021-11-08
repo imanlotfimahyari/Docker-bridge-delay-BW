@@ -192,8 +192,6 @@ function modifyNet() {
       echo "Removing the bridge: $(sudo docker network rm myTestNet)"
     fi
   done
-
-  #statements
 }
 
 
