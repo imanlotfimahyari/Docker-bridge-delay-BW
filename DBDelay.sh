@@ -55,17 +55,21 @@ function testNet() {
 
   # Creating containers and the bridge
   sudo docker-compose up -d
+  BR_NAME="myTestNet"
+}
+
+
+# Getting bridge and the containers info
+function netInfo() {
 
   ## Getting the container names and interface data
   INTF="eth0"
-  cmd="docker ps --format {{.ID}}:{{.Names}}"
   CONTAINER_NAMES=""
   CONTAINER_IPS=""
   CONTAINER_VETH_IN_BRIDGES=""
 
-  for i in $($cmd); do
-    container_ID=$(docker ps --format {{.ID}}:{{.Names}}|grep $i|cut -d ":" -f 1)
-    container_name=$(docker ps --format {{.ID}}:{{.Names}}|grep $i|cut -d ":" -f 2)
+  for i in $(docker network inspect $BR_NAME | grep \"Name\" |grep -v \"$BR_NAME\"|cut -d ":" -f 2|cut -d "\"" -f 2); do
+    container_name=$i
 
     # Not the best way but currently to make sure that iproute2 package is installed in the docker containers
     ERRR=$(docker exec -it $container_name ip)
@@ -75,8 +79,8 @@ function testNet() {
       docker exec -it $container_name apt-get install -y iproute2 >> containers_update.log 2>&1
     fi
 
-    container_IP=$(docker network inspect myTestNet|grep -A3 \"$(echo $i|cut -d ":" -f 2)\"|grep "IP"|sed "s/ //g"|cut -d "," -f 1|cut -d ":" -f 2)
-    veth_in_container=$(sudo docker exec $(echo $i|cut -d ":" -f 2) ip a|grep ${INTF}@|cut -d ':' -f 1)
+    container_IP=$(docker network inspect $BR_NAME|grep -A3 \"${container_name}\"|grep "IP"|sed "s/ //g"|cut -d "," -f 1|cut -d ":" -f 2)
+    veth_in_container=$(sudo docker exec $container_name ip a|grep ${INTF}@|cut -d ':' -f 1)
     veth_in_bridge=$(sudo ip a|grep "if${veth_in_container}"|cut -d ":" -f 2|cut -d '@' -f 1|sed "s/ //g")
     echo -e "${container_name} ${container_IP} ${veth_in_bridge}" >> container_bridge_info.txt
     echo "$container_name $container_IP $veth_in_bridge"
@@ -84,16 +88,15 @@ function testNet() {
     CONTAINER_IPS="$CONTAINER_IPS $container_IP"
     CONTAINER_VETH_IN_BRIDGES="$CONTAINER_VETH_IN_BRIDGES $veth_in_bridge"
   done
-  modify
 }
 
 function modify() {
 
   ## STRUCTURE for cbq and htb
 
-  #       f ->            1:0            root handle 1: cbq "qdisc"
+  #       f ->            1:0            root handle 1: cbq|htb "qdisc"
   #       i |              |
-  #       l |             1:1            classid 1:1 cbq "class"
+  #       l |             1:1            classid 1:1 cbq|htb "class"
   #       t |            /   \
   #       e |           /     \
   #       r ->       1:2      1:3   ...  leaf classes
@@ -182,11 +185,17 @@ function modify() {
 }
 
 
-# # Modify the already active bridge
-# function modifyNet() {
-#   #statements
-# }
-#
+# Modify the already active bridge
+function modifyNet() {
+  for i in $(docker network ls); do
+    if [[ "$i" == "$BR_NAME" ]]; then
+      echo "Removing the bridge: $(sudo docker network rm myTestNet)"
+    fi
+  done
+
+  #statements
+}
+
 
 
 ## Parse mode
@@ -194,6 +203,9 @@ if [[ $# -eq 3 ]] ; then
   MODE="$1"
   NEW_C=$2
   TEST_CLASS="$3"
+elif [[ $# -eq 2 ]]; then
+  MODE="$1"
+  BR_NAME="$2"
 elif [[ $# -eq 1 ]]; then
   MODE="$1"
 else
@@ -208,12 +220,15 @@ elif [[ "$MODE" == "test" ]]; then
   if [[ "$TEST_CLASS" == "htb" ]] || [[ "$TEST_CLASS" == "cbq" ]]; then
     cleanUp
     testNet
+    netInfo
+    modify
   else
     echo "Class for tc not defined in this code...!"
     exit 0
   fi
-# elif [[ "$MODE" == "modify" ]]; then
-#   modifyNet
+elif [[ "$MODE" == "modify" ]]; then
+  netInfo
+  modify
 else
   echo "Unknown argument/s"
   exit 0
