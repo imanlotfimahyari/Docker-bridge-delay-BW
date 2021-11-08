@@ -49,7 +49,7 @@ B. Applying the script on an existing bridge.
   ```bash
   sudo DBDelay.sh modify BRIDGE_NAME
   ``` 
-  Where ` BRIDGE_NAME` is the name of your bridge that you want to apply your desired delay and bandwith control (use `docker network ls` in case you do not remember the bridge name). It will ask for each container the total bandwidth it accepts from the bridge (through `VethX`), the delay and the bandwidth regarding every other container towards this one. 
+  Where ` BRIDGE_NAME` is the name of your bridge that you want to apply your desired delay and bandwith control (use `docker network ls` in case you do not remember the bridge name). It will ask for each container the total bandwidth it accepts from the bridge (through `VethX`), the delay and the bandwidth regarding every other container towards this one. For this one to work, the containers must be directly connected to the bridge which is the target of this script.
   
   ## Important ##
   Do not forget to use symmetric delays between each pair of containers and keep in mind that sum of the total bandwidth assigned to flows crossing `VethX` should not exceed the main bandwidth assigned tio this `VethX`. Also, sum of the total bandwidth in the bridge should be less than `1/10` of the available system bandwidth.
