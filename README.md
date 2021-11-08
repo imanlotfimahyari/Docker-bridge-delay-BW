@@ -42,7 +42,7 @@ A. Starting a test structure using
   
   In this case, after fininishing your tests, you can clean the test structure using
   ```bash
-  sudo DBDelay.sh clean X
+  sudo DBDelay.sh clean
   ``` 
 B. Applying the script on an existing bridge. 
   1. Run the script as
