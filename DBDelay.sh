@@ -1,28 +1,17 @@
 #! /usr/bin/env bash
 
-
 # Cleaning the test structure
 function cleanUp() {
-  # Number of test containers
-  OLD_C=0
+  # Stopping and removing already existing containers and the bridge
   cmd="docker ps --format {{.ID}}:{{.Names}}"
   for i in $($cmd); do
-    container_name=$(docker ps --format {{.ID}}:{{.Names}}|grep $i|cut -d ":" -f 2)
-    if [[ "${container_name:0:6}" == "client" ]] ; then
-      OLD_C=$(($OLD_C+1))
+    C_name=$($i|cut -d ":" -f 2)
+    if [[ "$C_name" == "client" ]]; then
+      echo "Stop: $(sudo docker container stop $C_name)"
+      echo "remove: $(sudo docker container rm $C_name)"
     fi
   done
-
-  # Stopping and removing already existing containers and the bridge
-  for i in $(seq 1 $OLD_C);do
-    echo "Stop: $(sudo docker container stop client$i)"
-    echo "remove: $(sudo docker container rm client$i)"
-  done
-  for i in $(docker network ls); do
-    if [[ "$i" == "myTestBridge" ]]; then
-      echo "Removing the bridge: $(sudo docker network rm myTestBridge)"
-    fi
-  done
+  echo "Removing the bridge: $(sudo docker network rm myTestNet)"
 
   # Delete previous files
   rm docker-compose.yml containers_update.log container_bridge_info.txt
