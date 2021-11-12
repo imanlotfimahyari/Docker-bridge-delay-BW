@@ -79,6 +79,8 @@ function netInfo() {
   done
 }
 
+
+# Modify the already active bridge
 function modify() {
 
   ## STRUCTURE for cbq and htb
@@ -172,17 +174,6 @@ function modify() {
     done
   done
 }
-
-
-# Modify the already active bridge
-function modifyNet() {
-  for i in $(docker network ls); do
-    if [[ "$i" == "$BR_NAME" ]]; then
-      echo "Removing the bridge: $(sudo docker network rm myTestNet)"
-    fi
-  done
-}
-
 
 
 ## Parse mode
